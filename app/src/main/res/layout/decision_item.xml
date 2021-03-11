@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:backgroundTint="@color/cardview_dark_background"
+    android:background="@color/cardview_dark_background"
+    app:cardCornerRadius="16dp"
+    android:elevation="5dp"
+    android:layout_marginLeft="30dp"
+    android:layout_marginRight="30dp"
+    android:layout_marginTop="15dp"
+    tools:targetApi="lollipop">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/dec_progress_circular"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:progress="80"
+            android:progressDrawable="@drawable/progress_circle"
+            android:layout_marginStart="40dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="25dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/dec_progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="@id/dec_progress_circular"
+            app:layout_constraintEnd_toEndOf="@id/dec_progress_circular"
+            android:text="50%"
+            android:textSize="13sp"
+            android:fontFamily="@font/fira_sans_medium"
+            app:layout_constraintTop_toTopOf="@id/dec_progress_circular"
+            app:layout_constraintBottom_toBottomOf="@id/dec_progress_circular" />
+
+        <TextView
+            android:id="@+id/dec_title"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:fontFamily="@font/fira_sans_regular"
+            android:text="Example title"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@id/dec_progress_circular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.185"
+            app:layout_constraintStart_toEndOf="@id/dec_progress_circular"
+            app:layout_constraintTop_toTopOf="@id/dec_progress_circular"
+            app:layout_constraintVertical_bias="0.517" />
+
+        <ImageView
+            android:id="@+id/dec_delete_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_close"
+            android:layout_margin="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.cardview.widget.CardView>
