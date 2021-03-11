@@ -40,7 +40,7 @@ class DecisionBottomSheet : BottomSheetDialogFragment() {
 
         addTaskBtn.setOnClickListener {
             if (etTaskTitle.text.isNotEmpty()) {
-                insertDecisionListener.onInsert(Decision(0, etTaskTitle.text.toString(), 0, "333333"), 0)
+                insertDecisionListener.onInsert(Decision(0, etTaskTitle.text.toString(), 0, "#333333"), 0)
                 dismissListener.dismiss()
                 etTaskTitle.setText("")
             } else Toast.makeText(context, "Введите заголовок задачи!", Toast.LENGTH_LONG).show()
