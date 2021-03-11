@@ -23,7 +23,7 @@ class DecisionAdapter :
     lateinit var deleteListener: DeleteListener
     lateinit var openListener: OpenListener
 
-    val diffCallback = object : DiffUtil.ItemCallback<Decision>() {
+    private val diffCallback = object : DiffUtil.ItemCallback<Decision>() {
         override fun areItemsTheSame(oldItem: Decision, newItem: Decision): Boolean {
             return oldItem.id == newItem.id
         }
@@ -41,7 +41,7 @@ class DecisionAdapter :
         this.openListener = openListener
     }
 
-    val differ = AsyncListDiffer(this, diffCallback)
+    private val differ = AsyncListDiffer(this, diffCallback)
 
     inner class DecisionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textProgressTv: TextView = itemView.findViewById(R.id.dec_progress_text)
