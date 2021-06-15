@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import spiral.bit.dev.simpledecidehelper.adapters.ComplDecisionAdapter
 import spiral.bit.dev.simpledecidehelper.adapters.DecisionAdapter
 import spiral.bit.dev.simpledecidehelper.adapters.ProsConsAdapter
 import spiral.bit.dev.simpledecidehelper.data.DecisionsDatabase
@@ -37,6 +38,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideDecisionAdapter() = DecisionAdapter()
+
+    @Singleton
+    @Provides
+    fun provideComplDecisionAdapter() = ComplDecisionAdapter()
 
     @Singleton
     @Provides

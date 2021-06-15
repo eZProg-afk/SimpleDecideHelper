@@ -6,9 +6,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.MyTasksFragment">
 
+    <TextView
+        android:id="@+id/no_tasks_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Сейчас здесь нет задач :("
+        android:fontFamily="@font/fira_sans_bold"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:textSize="23sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/add_task_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Нажмите на кнопку внизу, \nчтобы добавить одну!"
+        android:fontFamily="@font/fira_sans_medium"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/no_tasks_tv" />
+
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/empty_anim"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        app:lottie_rawRes="@raw/empty"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_task_tv"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/decisions_rv"
         android:layout_width="match_parent"
+        android:visibility="visible"
         android:layout_height="match_parent"
         tools:listitem="@layout/decision_item"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

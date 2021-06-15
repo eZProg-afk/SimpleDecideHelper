@@ -1,25 +1,26 @@
-package spiral.bit.dev.simpledecidehelper
+package spiral.bit.dev.simpledecidehelper.activities
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import spiral.bit.dev.simpledecidehelper.R
 import spiral.bit.dev.simpledecidehelper.databinding.ActivityProfConsBinding
 import spiral.bit.dev.simpledecidehelper.fragments.ProsConsFragment
 import spiral.bit.dev.simpledecidehelper.listeners.DismissListener
-import spiral.bit.dev.simpledecidehelper.listeners.EditDismissListener
+import spiral.bit.dev.simpledecidehelper.listeners.ComplDismissListener
 import spiral.bit.dev.simpledecidehelper.listeners.UpdateListener
 import spiral.bit.dev.simpledecidehelper.models.Decision
 import spiral.bit.dev.simpledecidehelper.other.EditBottomSheet
 import spiral.bit.dev.simpledecidehelper.other.ProsConsBottomSheet
+import spiral.bit.dev.simpledecidehelper.other.TAGMODALBOTTOMSHEET
 import spiral.bit.dev.simpledecidehelper.viewmodels.MainViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ProsConsActivity : AppCompatActivity(R.layout.activity_prof_cons), DismissListener, EditDismissListener,
+class ProsConsActivity : AppCompatActivity(R.layout.activity_prof_cons), DismissListener, ComplDismissListener,
 UpdateListener {
 
     private val prosConsBinding: ActivityProfConsBinding by viewBinding()
@@ -77,12 +78,12 @@ UpdateListener {
         })
 
         prosConsBinding.fabAddTask.setOnClickListener {
-            prosConsBottomSheet.show(supportFragmentManager, ProsConsBottomSheet.TAG)
+            prosConsBottomSheet.show(supportFragmentManager, TAGMODALBOTTOMSHEET)
         }
 
         prosConsBinding.fabEditTask.setOnClickListener {
             editBottomSheet.setDecision(decision)
-            editBottomSheet.show(supportFragmentManager, EditBottomSheet.TAG)
+            editBottomSheet.show(supportFragmentManager, TAGMODALBOTTOMSHEET)
         }
 
         prosConsFragment.setModalBottomSheet(prosConsBottomSheet)

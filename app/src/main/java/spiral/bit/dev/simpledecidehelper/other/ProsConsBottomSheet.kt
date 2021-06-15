@@ -8,8 +8,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.admanager.AdManagerAdRequest
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.jaygoo.widget.OnRangeChangedListener
 import com.jaygoo.widget.RangeSeekBar
 import dagger.hilt.android.AndroidEntryPoint
 import spiral.bit.dev.simpledecidehelper.R
@@ -22,16 +23,13 @@ class ProsConsBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var dismissListener: DismissListener
     private lateinit var insertProsConsListener: InsertProsConsListener
+    private var isPros = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.pros_cons_bottom_sheet, container, false)
-
-    companion object {
-        const val TAG = "ModalBottomSheet"
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,40 +40,21 @@ class ProsConsBottomSheet : BottomSheetDialogFragment() {
         val consBtn: Button = view.findViewById(R.id.cons_btn)
         val weightSeekBar: RangeSeekBar = view.findViewById(R.id.weight_seek_bar)
         val closeBottomSheet: ImageView = view.findViewById(R.id.close_bottom_sheet)
+        val adBanner = view.findViewById<AdView>(R.id.adView)
+        val defSharedPrefs = view.context.getSharedPreferences("def_prefs", 0)
 
-        weightSeekBar.setOnRangeChangedListener(object : OnRangeChangedListener {
-            override fun onRangeChanged(
-                view: RangeSeekBar?,
-                leftValue: Float,
-                rightValue: Float,
-                isFromUser: Boolean
-            ) {
-
-            }
-
-            override fun onStartTrackingTouch(view: RangeSeekBar?, isLeft: Boolean) {
-
-            }
-
-            override fun onStopTrackingTouch(view: RangeSeekBar?, isLeft: Boolean) {
-
-            }
-
-        })
-
-        prosBtn.setOnClickListener {
-            consBtn.isEnabled = false
-            prosBtn.isEnabled = true
+        if (getSubscribeValueFromPref(defSharedPrefs)) {
+            adBanner.visibility = View.GONE
+        } else {
+            adBanner.visibility = View.VISIBLE
+            adBanner.loadAd(AdManagerAdRequest.Builder().build())
         }
 
-        consBtn.setOnClickListener {
-            prosBtn.isEnabled = false
-            consBtn.isEnabled = true
-        }
+        prosBtn.setOnClickListener { isPros = true }
+        consBtn.setOnClickListener { isPros = false }
 
         addTaskBtn.setOnClickListener {
             if (etTaskTitle.text.isNotEmpty()) {
-                val isPros: Boolean = prosBtn.isEnabled
                 insertProsConsListener.onInsert(
                     ProsConsItem(
                         0,

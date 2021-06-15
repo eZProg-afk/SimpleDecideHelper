@@ -1,5 +1,5 @@
 package spiral.bit.dev.simpledecidehelper.listeners
 
-interface EditDismissListener {
+interface ComplDismissListener {
     fun editDismiss()
 }

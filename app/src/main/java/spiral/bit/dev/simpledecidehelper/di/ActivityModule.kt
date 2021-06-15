@@ -5,8 +5,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.scopes.ActivityScoped
+import spiral.bit.dev.simpledecidehelper.fragments.CompletedTasksFragment
 import spiral.bit.dev.simpledecidehelper.fragments.MyTasksFragment
 import spiral.bit.dev.simpledecidehelper.fragments.ProsConsFragment
+import spiral.bit.dev.simpledecidehelper.other.CompleteBottomSheet
 import spiral.bit.dev.simpledecidehelper.other.DecisionBottomSheet
 import spiral.bit.dev.simpledecidehelper.other.EditBottomSheet
 import spiral.bit.dev.simpledecidehelper.other.ProsConsBottomSheet
@@ -21,6 +23,10 @@ object ActivityModule {
 
     @ActivityScoped
     @Provides
+    fun provideCompleteBottomSheet() = CompleteBottomSheet()
+
+    @ActivityScoped
+    @Provides
     fun provideProsConsBottomSheet() = ProsConsBottomSheet()
 
     @ActivityScoped
@@ -30,6 +36,10 @@ object ActivityModule {
     @ActivityScoped
     @Provides
     fun provideMyTasksInstance() = MyTasksFragment()
+
+    @ActivityScoped
+    @Provides
+    fun provideComplTasksInstance() = CompletedTasksFragment()
 
     @ActivityScoped
     @Provides

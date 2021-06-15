@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/buy_pro_version"
+        android:icon="@drawable/ic_buy_pro"
+        android:title="Оформить подписку" />
+
+    <item
+        android:id="@+id/night_theme"
+        android:icon="@drawable/ic_switch_theme"
+        android:title="@string/night_theme_option"
+        app:actionLayout="@layout/switch_theme_layout" />
+
+    <item
+        android:id="@+id/invite_a_friend"
+        android:icon="@drawable/ic_invite_friend"
+        android:title="@string/invite_option" />
+
+    <item
+        android:id="@+id/rate_app"
+        android:icon="@drawable/ic_rate_app"
+        android:title="@string/rate_app_option" />
+
+    <item
+        android:id="@+id/completed_decisions"
+        android:icon="@drawable/ic_completed"
+        android:title="@string/completed_tasks_option" />
+</menu>

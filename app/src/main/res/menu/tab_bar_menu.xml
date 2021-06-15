@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/my_tasks_item"
+        android:title="@string/my_tasks_option"
+        android:icon="@drawable/my_tasks" />
+
+    <item
+        android:id="@+id/completed_tasks_item"
+        android:title="@string/completed_tasks_option"
+        android:icon="@drawable/friends_tasks" />
+</menu>

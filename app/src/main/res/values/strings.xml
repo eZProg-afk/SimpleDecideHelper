@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SimpleDecideHelper</string>
+    <string name="app_name">DecideHelper</string>
     <string name="already_have_an_account_label">Уже есть акккаунт?</string>
     <string name="enter_login_label">Войти</string>
     <string name="facebook_app_id">4448756398474544</string>
@@ -15,7 +15,7 @@
     <string name="create_account_label">Создать</string>
     <string name="name_hint">Ваше имя или никнейм…</string>
     <string name="my_tasks_option">Мои задачи</string>
-    <string name="friends_tasks_option">Задачи друзей</string>
+    <string name="completed_tasks_option">Сделанные задачи</string>
     <string name="main_label"><![CDATA[За & против\n Помощник решить]]></string>
     <string name="add_task_label">Добавление задачи</string>
     <string name="task_title_hint">Заголовок задачи…</string>
@@ -24,7 +24,6 @@
     <string name="monetary_equals_label">Монетарный эквивалент</string>
     <string name="add_task_btn_label">Добавить задачу</string>
     <string name="add_friend_hint">Добавить друга</string>
-    <string name="completed_tasks_option">Завершенные задачи</string>
     <string name="night_theme_option">Тёмная тема</string>
     <string name="invite_option">Пригласить друга</string>
     <string name="rate_app_option">Оценить приложение</string>
@@ -39,4 +38,31 @@
     <string name="enter_code_label">Введите код…</string>
     <string name="edit_task_label">Редактирование</string>
     <string name="edit_task">Подтвердить</string>
+    <string name="delete_tasks_label">Сделанные задачи</string>
+    <string name="delete_all_tasks_label">Удалить все задачи</string>
+    <string name="cancel_label">Отменить</string>
+    <string name="delete_note_label">Удалить</string>
+    <string name="are_you_sure_delete_note_message">Вы точно хотите удалить \n все выполненные задачи?</string>
+    <string-array name="days">
+        <item>1 день</item>
+        <item>2 дня</item>
+        <item>10 дней</item>
+        <item>15 дней</item>
+        <item>30 дней</item>
+        <item>Никогда</item>
+    </string-array>
+
+    <!-- admob test id's -->
+
+    <string name="app_id">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="main_banner">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="dark_theme_label">Тёмная тема</string>
+    <string name="subscription_buy_label">Оформить подписку</string>
+    <string name="ke">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApT+Qc+iXroB06WxDpy8ASvmIyhbhIi5P+KbTTyGX3S/WtlmQ442I4AKtKdRU+rJKrfroQTPhRAoNGxhyhJyk/AQSAae2M2sRmoPxeRFTLAdOnKmdpghITQ2bRcflgFVIONLnLDIzmUniCCJ3TA8xX3AM9sdjo62wMKr1XdYAx28y6DOs8wEntdihtB0veRm/rpYyv2hO50GynnbfO9pOtKMH7ufL+fDCMtgqYyhszFXI5h6dkHzLJB8rSDcUkNmd4QGUd9FxNYgH2t7veylFFkfF0AC6XwtIcSAb7Dm6JXWoiD+kHwcacc5GXW4ijsPCEUiVOk9bJ7NJ4JXuvkLNEwIDAQAB</string>
+    <string name="auto_delete_label">Все задачи автоматически \n удаляются через...</string>
+    <string name="close_drawer_label">Свернуть меню</string>
+
+    <!-- admob active id's -->
+    <!--    <string name="app_id">ca-app-pub-7780453585001831~7171495897</string>-->
+    <!--    <string name="main_banner">ca-app-pub-7780453585001831/9414515858</string>-->
 </resources>

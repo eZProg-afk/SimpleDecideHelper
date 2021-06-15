@@ -53,6 +53,7 @@ class ProsConsFragment : Fragment(R.layout.fragment_pros_cons), DeleteProsConsLi
         mainViewModel.allProsCons.observe(viewLifecycleOwner) {
             listOfProsCons = it as ArrayList<ProsConsItem>
             prosConsAdapter.submitList(it)
+            checkIsRecyclerEmpty(listOfProsCons)
         }
 
         activity?.actionBar?.setDisplayHomeAsUpEnabled(true)
@@ -85,9 +86,25 @@ class ProsConsFragment : Fragment(R.layout.fragment_pros_cons), DeleteProsConsLi
         helper.attachToRecyclerView(prosConsBinding.prosConsRv)
     }
 
+    private fun checkIsRecyclerEmpty(list: List<ProsConsItem>) {
+        if (list.isEmpty()) {
+            prosConsBinding.emptyAnim.visibility = View.VISIBLE
+            prosConsBinding.addTaskTv.visibility = View.VISIBLE
+            prosConsBinding.noTasksTv.visibility = View.VISIBLE
+            prosConsBinding.prosConsRv.visibility = View.GONE
+            prosConsBinding.emptyAnim.playAnimation()
+        } else {
+            prosConsBinding.emptyAnim.visibility = View.GONE
+            prosConsBinding.addTaskTv.visibility = View.GONE
+            prosConsBinding.noTasksTv.visibility = View.GONE
+            prosConsBinding.prosConsRv.visibility = View.VISIBLE
+        }
+    }
+
     override fun onDelete(prosConsItem: ProsConsItem, position: Int) {
         mainViewModel.deleteProsConsItem(prosConsItem)
         prosConsAdapter.notifyItemRemoved(position)
+        mainViewModel.allProsCons.observe(viewLifecycleOwner) { checkIsRecyclerEmpty(it) }
     }
 
     override fun onInsert(prosConsItem: ProsConsItem, position: Int) {

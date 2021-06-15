@@ -8,19 +8,19 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.admanager.AdManagerAdRequest
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import spiral.bit.dev.simpledecidehelper.R
-import spiral.bit.dev.simpledecidehelper.listeners.DismissListener
-import spiral.bit.dev.simpledecidehelper.listeners.EditDismissListener
-import spiral.bit.dev.simpledecidehelper.listeners.InsertDecisionListener
+import spiral.bit.dev.simpledecidehelper.listeners.ComplDismissListener
 import spiral.bit.dev.simpledecidehelper.listeners.UpdateListener
 import spiral.bit.dev.simpledecidehelper.models.Decision
 
 @AndroidEntryPoint
 class EditBottomSheet : BottomSheetDialogFragment() {
 
-    private lateinit var editDismissListener: EditDismissListener
+    private lateinit var complDismissListener: ComplDismissListener
     private lateinit var updateListener: UpdateListener
     private var selectedNoteColor: String? = "#333333"
     private lateinit var decision: Decision
@@ -31,16 +31,21 @@ class EditBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.edit_bottom_sheet, container, false)
 
-    companion object {
-        const val TAG = "ModalBottomSheet"
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val etTaskTitle: EditText = view.findViewById(R.id.et_task_title)
         val editTaskBtn: Button = view.findViewById(R.id.btn_edit_task)
         val closeBottomSheet: ImageView = view.findViewById(R.id.close_bottom_sheet)
+        val defSharedPrefs = view.context.getSharedPreferences("def_prefs", 0)
+        val adBanner = view.findViewById<AdView>(R.id.adView)
+
+        if (getSubscribeValueFromPref(defSharedPrefs)) {
+            adBanner.visibility = View.GONE
+        } else {
+            adBanner.visibility = View.VISIBLE
+            adBanner.loadAd(AdManagerAdRequest.Builder().build())
+        }
 
         etTaskTitle.setText(decision.title)
 
@@ -49,7 +54,7 @@ class EditBottomSheet : BottomSheetDialogFragment() {
                 decision.title = etTaskTitle.text.toString()
                 decision.color = selectedNoteColor
                 updateListener.onUpdate(decision)
-                editDismissListener.editDismiss()
+                complDismissListener.editDismiss()
                 etTaskTitle.setText("")
             } else Toast.makeText(context, "Введите заголовок задачи!", Toast.LENGTH_LONG).show()
         }
@@ -99,11 +104,11 @@ class EditBottomSheet : BottomSheetDialogFragment() {
             }
         }
 
-        closeBottomSheet.setOnClickListener { editDismissListener.editDismiss() }
+        closeBottomSheet.setOnClickListener { complDismissListener.editDismiss() }
     }
 
-    fun setMyDismissListener(editDismissListener: EditDismissListener) {
-        this.editDismissListener = editDismissListener
+    fun setMyDismissListener(complDismissListener: ComplDismissListener) {
+        this.complDismissListener = complDismissListener
     }
 
     fun setMyUpdateListener(updateListener: UpdateListener) {
