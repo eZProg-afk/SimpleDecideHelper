@@ -1,25 +1,28 @@
 package spiral.bit.dev.simpledecidehelper.other
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
-import com.google.android.gms.ads.AdView
+import androidx.core.view.isVisible
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.gms.ads.admanager.AdManagerAdRequest
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import spiral.bit.dev.simpledecidehelper.R
+import spiral.bit.dev.simpledecidehelper.databinding.EditBottomSheetBinding
 import spiral.bit.dev.simpledecidehelper.listeners.ComplDismissListener
 import spiral.bit.dev.simpledecidehelper.listeners.UpdateListener
 import spiral.bit.dev.simpledecidehelper.models.Decision
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class EditBottomSheet : BottomSheetDialogFragment() {
 
+    private val editBinding: EditBottomSheetBinding by viewBinding()
+    @Inject
+    lateinit var defSharedPrefs: SharedPreferences
     private lateinit var complDismissListener: ComplDismissListener
     private lateinit var updateListener: UpdateListener
     private var selectedNoteColor: String? = "#333333"
@@ -34,77 +37,69 @@ class EditBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val etTaskTitle: EditText = view.findViewById(R.id.et_task_title)
-        val editTaskBtn: Button = view.findViewById(R.id.btn_edit_task)
-        val closeBottomSheet: ImageView = view.findViewById(R.id.close_bottom_sheet)
-        val defSharedPrefs = view.context.getSharedPreferences("def_prefs", 0)
-        val adBanner = view.findViewById<AdView>(R.id.adView)
-
-        if (getSubscribeValueFromPref(defSharedPrefs)) {
-            adBanner.visibility = View.GONE
+        if (defSharedPrefs.getSubscribeValueFromPref()) {
+            editBinding.adView.isVisible = false
         } else {
-            adBanner.visibility = View.VISIBLE
-            adBanner.loadAd(AdManagerAdRequest.Builder().build())
+            editBinding.adView.isVisible = true
+            editBinding.adView.loadAd(AdManagerAdRequest.Builder().build())
         }
 
-        etTaskTitle.setText(decision.title)
+        editBinding.etTaskTitle.setText(decision.title)
 
-        editTaskBtn.setOnClickListener {
-            if (etTaskTitle.text.isNotEmpty()) {
-                decision.title = etTaskTitle.text.toString()
+        editBinding.btnEditTask.setOnClickListener {
+            if (editBinding.etTaskTitle.text.isNotEmpty()) {
+                decision.title = editBinding.etTaskTitle.text.toString()
                 decision.color = selectedNoteColor
+
                 updateListener.onUpdate(decision)
                 complDismissListener.editDismiss()
-                etTaskTitle.setText("")
-            } else Toast.makeText(context, "Введите заголовок задачи!", Toast.LENGTH_LONG).show()
+                editBinding.etTaskTitle.setText("")
+            } else requireContext() showToast getString(R.string.enter_title_of_task)
         }
 
-        val imageColor1: ImageView = view.findViewById(R.id.image_color_1)
-        val imageColor2: ImageView = view.findViewById(R.id.image_color_2)
-        val imageColor3: ImageView = view.findViewById(R.id.image_color_3)
-        val imageColor4: ImageView = view.findViewById(R.id.image_color_4)
-
-        view.findViewById<View>(R.id.view_color_1).setOnClickListener {
+        editBinding.viewColor1.setOnClickListener {
             selectedNoteColor = "#91E3A4"
-            imageColor1.setImageResource(R.drawable.ic_done)
-            imageColor2.setImageResource(0)
-            imageColor3.setImageResource(0)
-            imageColor4.setImageResource(0)
+            editBinding.imageColor1.setImageResource(R.drawable.ic_done)
+            editBinding.imageColor2.setImageResource(0)
+            editBinding.imageColor3.setImageResource(0)
+            editBinding.imageColor4.setImageResource(0)
         }
 
-        view.findViewById<View>(R.id.view_color_2).setOnClickListener {
+        editBinding.viewColor2.setOnClickListener {
             selectedNoteColor = "#E79AC4"
-            imageColor1.setImageResource(0)
-            imageColor2.setImageResource(R.drawable.ic_done)
-            imageColor3.setImageResource(0)
-            imageColor4.setImageResource(0)
+            editBinding.imageColor1.setImageResource(0)
+            editBinding.imageColor2.setImageResource(R.drawable.ic_done)
+            editBinding.imageColor3.setImageResource(0)
+            editBinding.imageColor4.setImageResource(0)
         }
 
-        view.findViewById<View>(R.id.view_color_3).setOnClickListener {
+        editBinding.viewColor3.setOnClickListener {
             selectedNoteColor = "#3B5998"
-            imageColor1.setImageResource(0)
-            imageColor2.setImageResource(0)
-            imageColor3.setImageResource(R.drawable.ic_done)
-            imageColor4.setImageResource(0)
+            editBinding.imageColor1.setImageResource(0)
+            editBinding.imageColor2.setImageResource(0)
+            editBinding.imageColor3.setImageResource(R.drawable.ic_done)
+            editBinding.imageColor4.setImageResource(0)
         }
 
-        view.findViewById<View>(R.id.view_color_4).setOnClickListener {
+        editBinding.viewColor4.setOnClickListener {
             selectedNoteColor = "#FFF5D3"
-            imageColor1.setImageResource(0)
-            imageColor2.setImageResource(0)
-            imageColor3.setImageResource(0)
-            imageColor4.setImageResource(R.drawable.ic_done)
+            editBinding.imageColor1.setImageResource(0)
+            editBinding.imageColor2.setImageResource(0)
+            editBinding.imageColor3.setImageResource(0)
+            editBinding.imageColor4.setImageResource(R.drawable.ic_done)
         }
 
         if (decision.color != null && decision.color.toString().isNotEmpty()) {
             when (decision.color) {
-                "#FDBE3B" -> view.findViewById<View>(R.id.view_color_2).performClick()
-                "#FF4842" -> view.findViewById<View>(R.id.view_color_3).performClick()
-                "#3A52FC" -> view.findViewById<View>(R.id.view_color_4).performClick()
+                "#FDBE3B" -> editBinding.viewColor2.performClick()
+                "#FF4842" -> editBinding.viewColor3.performClick()
+                "#3A52FC" -> editBinding.viewColor4.performClick()
             }
         }
 
-        closeBottomSheet.setOnClickListener { complDismissListener.editDismiss() }
+        editBinding.closeBottomSheet.setOnClickListener {
+            complDismissListener.editDismiss()
+        }
     }
 
     fun setMyDismissListener(complDismissListener: ComplDismissListener) {

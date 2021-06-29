@@ -1,11 +1,10 @@
 package spiral.bit.dev.simpledecidehelper.other
 
-import android.annotation.SuppressLint
-import android.content.SharedPreferences
-import spiral.bit.dev.simpledecidehelper.activities.MainActivity
-
-@SuppressLint("StaticFieldLeak")
-lateinit var ACTIVITY: MainActivity
 const val SUBSCRIBE_KEY = "subscribe"
 const val ITEM_SKU_SUBSCRIBE = "removing_ads"
-const val TAGMODALBOTTOMSHEET = "ModalBottomSheet"
+const val TAG_MODAL_BOTTOM_SHEET = "ModalBottomSheet"
+const val LOG_TAG = "APP_TAG"
+const val MAIN_PREFS_NAME = "main_preferences"
+const val MAIN_PREFS_MODE = 0
+const val KEY_FACTORY_ALGORITHM = "RSA"
+const val SIGNATURE_ALGORITHM = "SHA1withRSA"

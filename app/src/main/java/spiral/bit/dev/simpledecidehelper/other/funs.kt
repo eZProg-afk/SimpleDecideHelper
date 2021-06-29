@@ -1,32 +1,60 @@
 package spiral.bit.dev.simpledecidehelper.other
 
+import android.content.Context
 import android.content.SharedPreferences
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import spiral.bit.dev.simpledecidehelper.R
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
+import java.util.concurrent.TimeUnit
 
-fun changeFragments(fragment: Fragment, addStack: Boolean = true) {
+fun AppCompatActivity.changeFragments(
+    fragment: Fragment,
+    addStack: Boolean = true,
+    container: Int
+) {
     if (addStack) {
-        ACTIVITY.supportFragmentManager.beginTransaction()
+        this.supportFragmentManager.beginTransaction()
             .addToBackStack(null)
             .replace(
-                R.id.main_fragment_container,
+                container,
                 fragment
             )
             .commit()
     } else {
-        ACTIVITY.supportFragmentManager.beginTransaction()
+        this.supportFragmentManager.beginTransaction()
             .replace(
-                R.id.main_fragment_container,
+                container,
                 fragment
             )
             .commit()
     }
 }
 
-fun getSubscribeValueFromPref(defSharedPrefs: SharedPreferences): Boolean {
-    return defSharedPrefs.getBoolean(SUBSCRIBE_KEY, false)
+fun SharedPreferences.getSubscribeValueFromPref(): Boolean {
+    return this.getBoolean(SUBSCRIBE_KEY, false)
 }
 
-fun saveSubscribeValueToPref(defSharedPrefs: SharedPreferences, value: Boolean) {
-    defSharedPrefs.edit().putBoolean(SUBSCRIBE_KEY, value).apply()
+infix fun SharedPreferences.saveSubscribeValueToPref(value: Boolean) {
+    this.edit().putBoolean(SUBSCRIBE_KEY, value).apply()
 }
+
+infix fun Context.showToast(msg: String) {
+    Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+}
+
+infix fun SharedPreferences.startWorkManager(context: Context) {
+    val repeatInterval = this.getInt("days_auto_delete", 0).toLong()
+    if (repeatInterval == 100L) {
+        return
+    } else {
+        val workRequest = PeriodicWorkRequest.Builder(
+            RoomWorker::class.java, repeatInterval, TimeUnit.DAYS
+        )
+            .build()
+        val workManager = WorkManager.getInstance(context)
+        workManager.enqueue(workRequest)
+    }
+}
+

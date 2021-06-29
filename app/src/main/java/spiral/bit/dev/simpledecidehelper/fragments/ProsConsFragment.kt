@@ -1,7 +1,6 @@
 package spiral.bit.dev.simpledecidehelper.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,93 +17,76 @@ import spiral.bit.dev.simpledecidehelper.listeners.InsertProsConsListener
 import spiral.bit.dev.simpledecidehelper.models.Decision
 import spiral.bit.dev.simpledecidehelper.models.ProsConsItem
 import spiral.bit.dev.simpledecidehelper.other.ProsConsBottomSheet
-import spiral.bit.dev.simpledecidehelper.viewmodels.MainViewModel
+import spiral.bit.dev.simpledecidehelper.other.checkRecyclerProsCons
+import spiral.bit.dev.simpledecidehelper.viewmodels.ProsConsViewModel
 import java.util.*
-import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class ProsConsFragment : Fragment(R.layout.fragment_pros_cons), DeleteProsConsListener,
     InsertProsConsListener {
 
-    private val prosConsBinding: FragmentProsConsBinding by viewBinding(FragmentProsConsBinding::bind)
-    private val mainViewModel: MainViewModel by viewModels()
+    private val prosConsViewModel: ProsConsViewModel by viewModels()
+    private val prosConsBinding: FragmentProsConsBinding by viewBinding(
+        FragmentProsConsBinding::bind
+    )
 
-    lateinit var myProsConsBottomSheet: ProsConsBottomSheet
+    private val myProsConsBottomSheet by lazy { ProsConsBottomSheet() }
+    private val prosConsAdapter by lazy { ProsConsAdapter() }
 
     private var listOfProsCons = arrayListOf<ProsConsItem>()
-
-    @Inject
-    lateinit var prosConsAdapter: ProsConsAdapter
-
     private var decision: Decision? = null
+    private val helper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+        ItemTouchHelper.UP or ItemTouchHelper.DOWN
+                or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT, 0
+    ) {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            val sourcePosition = viewHolder.adapterPosition
+            val targetPosition = target.adapterPosition
+            Collections.swap(listOfProsCons, sourcePosition, targetPosition)
+            prosConsAdapter.notifyItemMoved(sourcePosition, targetPosition)
+            return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        }
+    })
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        activity?.actionBar?.setDisplayHomeAsUpEnabled(true)
         arguments?.let {
             decision = it.getSerializable("decision") as Decision?
-            decision?.id?.let { it1 -> mainViewModel.setParentId(it1) }
+            decision?.id?.let { it1 -> prosConsViewModel.setParentId(it1) }
         }
 
         myProsConsBottomSheet.setMyInsertListener(this)
         prosConsAdapter.setMyDeleteProsConsListener(this)
 
-        mainViewModel.allProsCons.observe(viewLifecycleOwner) {
+        prosConsViewModel.allProsCons.observe(viewLifecycleOwner) {
             listOfProsCons = it as ArrayList<ProsConsItem>
             prosConsAdapter.submitList(it)
-            checkIsRecyclerEmpty(listOfProsCons)
+            it checkRecyclerProsCons (prosConsBinding)
         }
 
-        activity?.actionBar?.setDisplayHomeAsUpEnabled(true)
         prosConsBinding.prosConsRv.apply {
             adapter = prosConsAdapter
             layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             setHasFixedSize(true)
-        }
-
-        val helper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN
-                    or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT, 0
-        ) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                val sourcePosition = viewHolder.adapterPosition
-                val targetPosition = target.adapterPosition
-                Collections.swap(listOfProsCons, sourcePosition, targetPosition)
-                prosConsAdapter.notifyItemMoved(sourcePosition, targetPosition)
-                return true
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            }
-        })
-
-        helper.attachToRecyclerView(prosConsBinding.prosConsRv)
-    }
-
-    private fun checkIsRecyclerEmpty(list: List<ProsConsItem>) {
-        if (list.isEmpty()) {
-            prosConsBinding.emptyAnim.visibility = View.VISIBLE
-            prosConsBinding.addTaskTv.visibility = View.VISIBLE
-            prosConsBinding.noTasksTv.visibility = View.VISIBLE
-            prosConsBinding.prosConsRv.visibility = View.GONE
-            prosConsBinding.emptyAnim.playAnimation()
-        } else {
-            prosConsBinding.emptyAnim.visibility = View.GONE
-            prosConsBinding.addTaskTv.visibility = View.GONE
-            prosConsBinding.noTasksTv.visibility = View.GONE
-            prosConsBinding.prosConsRv.visibility = View.VISIBLE
+            helper.attachToRecyclerView(this)
         }
     }
 
     override fun onDelete(prosConsItem: ProsConsItem, position: Int) {
-        mainViewModel.deleteProsConsItem(prosConsItem)
+        prosConsViewModel.deleteProsConsItem(prosConsItem)
         prosConsAdapter.notifyItemRemoved(position)
-        mainViewModel.allProsCons.observe(viewLifecycleOwner) { checkIsRecyclerEmpty(it) }
+        prosConsViewModel.allProsCons.observe(viewLifecycleOwner) {
+            it checkRecyclerProsCons (prosConsBinding)
+        }
     }
 
     override fun onInsert(prosConsItem: ProsConsItem, position: Int) {
@@ -117,14 +99,10 @@ class ProsConsFragment : Fragment(R.layout.fragment_pros_cons), DeleteProsConsLi
                 prosConsItem.weight
             )
         }?.let {
-            mainViewModel.insertProsConsItem(
+            prosConsViewModel.insertProsConsItem(
                 it
             )
         }
         prosConsBinding.prosConsRv.smoothScrollToPosition(position)
-    }
-
-    fun setModalBottomSheet(prosConsBottomSheet: ProsConsBottomSheet) {
-        this.myProsConsBottomSheet = prosConsBottomSheet
     }
 }

@@ -14,6 +14,5 @@ import spiral.bit.dev.simpledecidehelper.models.ProsConsItem
 abstract class DecisionsDatabase : RoomDatabase() {
 
     abstract fun getDecisionsDao(): DecisionsDAO
-
     abstract fun getProsConsDao(): ProsConsDao
 }

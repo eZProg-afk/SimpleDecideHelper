@@ -9,10 +9,6 @@ import java.security.spec.X509EncodedKeySpec
 
 object Security {
 
-    private const val TAG = "IABUtil/Security"
-    private const val KEY_FACTORY_ALGORITHM = "RSA"
-    private const val SIGNATURE_ALGORITHM = "SHA1withRSA"
-
     @Throws(IOException::class)
     fun verifyPurchase(
         base64PublicKey: String?, signedData: String,
@@ -20,10 +16,7 @@ object Security {
     ): Boolean {
         if (TextUtils.isEmpty(signedData) || TextUtils.isEmpty(base64PublicKey)
             || TextUtils.isEmpty(signature)
-        ) {
-            //Purchase verification failed: missing data
-            return false
-        }
+        ) return false
         val key = generatePublicKey(base64PublicKey)
         return verify(key, signedData, signature)
     }
@@ -35,7 +28,6 @@ object Security {
             val keyFactory = KeyFactory.getInstance(KEY_FACTORY_ALGORITHM)
             keyFactory.generatePublic(X509EncodedKeySpec(decodedKey))
         } catch (e: NoSuchAlgorithmException) {
-            // "RSA" is guaranteed to be available.
             throw RuntimeException(e)
         } catch (e: InvalidKeySpecException) {
             val msg = "Invalid key specification: $e"
@@ -47,7 +39,6 @@ object Security {
         val signatureBytes: ByteArray = try {
             Base64.decode(signature, Base64.DEFAULT)
         } catch (e: IllegalArgumentException) {
-            //Base64 decoding failed
             return false
         }
         try {
@@ -56,7 +47,6 @@ object Security {
             signatureAlgorithm.update(signedData.toByteArray())
             return signatureAlgorithm.verify(signatureBytes)
         } catch (e: NoSuchAlgorithmException) {
-            // "RSA" is guaranteed to be available
             throw RuntimeException(e)
         } catch (e: InvalidKeyException) {
             //Invalid key specification

@@ -61,6 +61,13 @@
     <string name="ke">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApT+Qc+iXroB06WxDpy8ASvmIyhbhIi5P+KbTTyGX3S/WtlmQ442I4AKtKdRU+rJKrfroQTPhRAoNGxhyhJyk/AQSAae2M2sRmoPxeRFTLAdOnKmdpghITQ2bRcflgFVIONLnLDIzmUniCCJ3TA8xX3AM9sdjo62wMKr1XdYAx28y6DOs8wEntdihtB0veRm/rpYyv2hO50GynnbfO9pOtKMH7ufL+fDCMtgqYyhszFXI5h6dkHzLJB8rSDcUkNmd4QGUd9FxNYgH2t7veylFFkfF0AC6XwtIcSAb7Dm6JXWoiD+kHwcacc5GXW4ijsPCEUiVOk9bJ7NJ4JXuvkLNEwIDAQAB</string>
     <string name="auto_delete_label">Все задачи автоматически \n удаляются через...</string>
     <string name="close_drawer_label">Свернуть меню</string>
+    <string name="sub_cancelled">Подписка отменена</string>
+    <string name="sub_in_process">Покупка находится в процессе. Пожалуйста, завершите транзакцию</string>
+    <string name="sub_confirmed">Подписка успешно оформлена! Перезапустите приложение!</string>
+    <string name="error_invalid_sub">Ошибка - невалидная покупка</string>
+    <string name="subs_not_supported">Извините, подписки не подерживаются. Пожалуйста, обновите Google Play Store.</string>
+    <string name="sub_not_found">Подписка не найдена :(</string>
+    <string name="enter_title_of_task">Введите заголовок задачи!</string>
 
     <!-- admob active id's -->
     <!--    <string name="app_id">ca-app-pub-7780453585001831~7171495897</string>-->

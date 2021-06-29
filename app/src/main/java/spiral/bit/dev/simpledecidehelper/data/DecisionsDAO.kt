@@ -1,6 +1,7 @@
 package spiral.bit.dev.simpledecidehelper.data
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.room.*
 import spiral.bit.dev.simpledecidehelper.models.CompletedDecision
 import spiral.bit.dev.simpledecidehelper.models.Decision

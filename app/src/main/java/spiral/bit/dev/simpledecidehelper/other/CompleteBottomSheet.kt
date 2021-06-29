@@ -10,22 +10,26 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.admanager.AdManagerAdRequest
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import spiral.bit.dev.simpledecidehelper.R
+import spiral.bit.dev.simpledecidehelper.databinding.CompleteBottomSheetBinding
 import spiral.bit.dev.simpledecidehelper.listeners.ComplDismissListener
-import spiral.bit.dev.simpledecidehelper.viewmodels.MainViewModel
+import spiral.bit.dev.simpledecidehelper.viewmodels.DecisionsViewModel
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CompleteBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var dismissListener: ComplDismissListener
-    private val mainViewModel: MainViewModel by viewModels()
-    private lateinit var mainPrefs: SharedPreferences
+    private val decisionsViewModel: DecisionsViewModel by viewModels()
+    private val complBinding: CompleteBottomSheetBinding by viewBinding()
+    @Inject lateinit var mainPrefs: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,17 +40,11 @@ class CompleteBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mainPrefs = view.context.getSharedPreferences("def_prefs", 0)
-
-        val daysSpinner: Spinner = view.findViewById(R.id.auto_delete_days_spinner)
-        val deleteAllTasksBtn: Button = view.findViewById(R.id.delete_btn)
-        val closeBottomSheet: ImageView = view.findViewById(R.id.close_bottom_sheet)
-        val adBanner = view.findViewById<AdView>(R.id.adView)
-
-        if (getSubscribeValueFromPref(mainPrefs)) adBanner.visibility = View.GONE
-        else {
-            adBanner.visibility = View.VISIBLE
-            adBanner.loadAd(AdManagerAdRequest.Builder().build())
+        if (mainPrefs.getSubscribeValueFromPref()) {
+            complBinding.adView.isVisible = false
+        } else {
+            complBinding.adView.isVisible = true
+            complBinding.adView.loadAd(AdManagerAdRequest.Builder().build())
         }
 
         val adapterDaysDelete: ArrayAdapter<*> =
@@ -56,9 +54,9 @@ class CompleteBottomSheet : BottomSheetDialogFragment() {
                 android.R.layout.simple_spinner_item
             )
         adapterDaysDelete.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        daysSpinner.adapter = adapterDaysDelete
+        complBinding.autoDeleteDaysSpinner.adapter = adapterDaysDelete
 
-        daysSpinner.onItemSelectedListener = object :
+        complBinding.autoDeleteDaysSpinner.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener {
             @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
             override fun onItemSelected(
@@ -82,8 +80,8 @@ class CompleteBottomSheet : BottomSheetDialogFragment() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
-        deleteAllTasksBtn.setOnClickListener { showDeleteNoteDialog(view) }
-        closeBottomSheet.setOnClickListener { dismissListener.editDismiss() }
+        complBinding.deleteBtn.setOnClickListener { showDeleteNoteDialog(view) }
+        complBinding.closeBottomSheet.setOnClickListener { dismissListener.editDismiss() }
     }
 
     fun setMyDismissListener(dismissListener: ComplDismissListener) {
@@ -103,7 +101,7 @@ class CompleteBottomSheet : BottomSheetDialogFragment() {
             ColorDrawable(0)
         )
         view.findViewById<View>(R.id.text_delete_note).setOnClickListener {
-            mainViewModel.deleteAllCompletedDecisions()
+            decisionsViewModel.deleteAllCompletedDecisions()
             dialogDeleteNote.dismiss()
             dismissListener.editDismiss()
         }

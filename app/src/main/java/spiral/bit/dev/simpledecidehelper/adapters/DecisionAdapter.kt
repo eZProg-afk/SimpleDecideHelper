@@ -3,16 +3,11 @@ package spiral.bit.dev.simpledecidehelper.adapters
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import spiral.bit.dev.simpledecidehelper.R
+import spiral.bit.dev.simpledecidehelper.databinding.DecisionItemBinding
 import spiral.bit.dev.simpledecidehelper.listeners.DeleteListener
 import spiral.bit.dev.simpledecidehelper.listeners.OpenListener
 import spiral.bit.dev.simpledecidehelper.models.Decision
@@ -43,28 +38,32 @@ class DecisionAdapter :
 
     private val differ = AsyncListDiffer(this, diffCallback)
 
-    inner class DecisionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textProgressTv: TextView = itemView.findViewById(R.id.dec_progress_text)
-        val titleDecisionTv: TextView = itemView.findViewById(R.id.dec_title)
-        val deleteDecisionImg: ImageView = itemView.findViewById(R.id.dec_delete_img)
-        val cardView: ConstraintLayout = itemView.findViewById(R.id.card_view)
+    inner class DecisionViewHolder(private val itemBinding: DecisionItemBinding) :
+        RecyclerView.ViewHolder(itemBinding.root) {
+
+        fun bind(decision: Decision, position: Int) {
+            itemBinding.decProgressText.text = decision.currentProgress.toString()
+            itemBinding.decTitle.text = decision.title
+            itemBinding.decDeleteImg.setOnClickListener {
+                deleteListener.onDelete(
+                    decision,
+                    position
+                )
+            }
+            itemView.setOnClickListener { openListener.open(decision) }
+            itemBinding.cardView.setBackgroundColor(Color.parseColor(decision.color))
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DecisionViewHolder {
         return DecisionViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.decision_item, parent, false)
+            DecisionItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: DecisionViewHolder, position: Int) {
-        val decision = differ.currentList[position]
-        holder.textProgressTv.text = "${decision.currentProgress}%"
-        holder.titleDecisionTv.text = decision.title
-        holder.deleteDecisionImg.setOnClickListener { deleteListener.onDelete(decision, position) }
-        holder.itemView.setOnClickListener { openListener.open(decision) }
-        holder.cardView.setBackgroundColor(Color.parseColor(decision.color))
+        holder.bind(differ.currentList[position], position)
     }
 
     override fun getItemCount(): Int = differ.currentList.size

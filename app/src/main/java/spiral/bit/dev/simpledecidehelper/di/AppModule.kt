@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import spiral.bit.dev.simpledecidehelper.adapters.ComplDecisionAdapter
 import spiral.bit.dev.simpledecidehelper.adapters.DecisionAdapter
 import spiral.bit.dev.simpledecidehelper.adapters.ProsConsAdapter
@@ -14,7 +15,7 @@ import spiral.bit.dev.simpledecidehelper.data.DecisionsDatabase
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 object AppModule {
 
     @Singleton
@@ -34,16 +35,4 @@ object AppModule {
     @Singleton
     @Provides
     fun provideProsConsDao(db: DecisionsDatabase) = db.getProsConsDao()
-
-    @Singleton
-    @Provides
-    fun provideDecisionAdapter() = DecisionAdapter()
-
-    @Singleton
-    @Provides
-    fun provideComplDecisionAdapter() = ComplDecisionAdapter()
-
-    @Singleton
-    @Provides
-    fun provideProsConsAdapter() = ProsConsAdapter()
 }

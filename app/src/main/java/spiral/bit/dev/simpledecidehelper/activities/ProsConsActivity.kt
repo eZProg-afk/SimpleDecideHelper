@@ -8,15 +8,15 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import spiral.bit.dev.simpledecidehelper.R
 import spiral.bit.dev.simpledecidehelper.databinding.ActivityProfConsBinding
-import spiral.bit.dev.simpledecidehelper.fragments.ProsConsFragment
 import spiral.bit.dev.simpledecidehelper.listeners.DismissListener
 import spiral.bit.dev.simpledecidehelper.listeners.ComplDismissListener
 import spiral.bit.dev.simpledecidehelper.listeners.UpdateListener
 import spiral.bit.dev.simpledecidehelper.models.Decision
 import spiral.bit.dev.simpledecidehelper.other.EditBottomSheet
 import spiral.bit.dev.simpledecidehelper.other.ProsConsBottomSheet
-import spiral.bit.dev.simpledecidehelper.other.TAGMODALBOTTOMSHEET
-import spiral.bit.dev.simpledecidehelper.viewmodels.MainViewModel
+import spiral.bit.dev.simpledecidehelper.other.TAG_MODAL_BOTTOM_SHEET
+import spiral.bit.dev.simpledecidehelper.viewmodels.DecisionsViewModel
+import spiral.bit.dev.simpledecidehelper.viewmodels.ProsConsViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -24,16 +24,11 @@ class ProsConsActivity : AppCompatActivity(R.layout.activity_prof_cons), Dismiss
 UpdateListener {
 
     private val prosConsBinding: ActivityProfConsBinding by viewBinding()
-    private val mainViewModel: MainViewModel by viewModels()
+    private val decisionsViewModel: DecisionsViewModel by viewModels()
+    private val prosConsViewModel: ProsConsViewModel by viewModels()
 
-    @Inject
-    lateinit var prosConsBottomSheet: ProsConsBottomSheet
-
-    @Inject
-    lateinit var editBottomSheet: EditBottomSheet
-
-    @Inject
-    lateinit var prosConsFragment: ProsConsFragment
+    private val prosConsBottomSheet by lazy { ProsConsBottomSheet() }
+    private val editBottomSheet by lazy { EditBottomSheet() }
 
     private val prosList = arrayListOf<Int>()
     private val consList = arrayListOf<Int>()
@@ -51,8 +46,8 @@ UpdateListener {
         editBottomSheet.setMyDismissListener(this)
         editBottomSheet.setMyUpdateListener(this)
 
-        mainViewModel.setParentId(decision.id)
-        mainViewModel.allProsCons.observe(this, {
+        prosConsViewModel.setParentId(decision.id)
+        prosConsViewModel.allProsCons.observe(this, {
 
             var allPros = 0
             var allCons = 0
@@ -74,25 +69,17 @@ UpdateListener {
             else prosConsBinding.decProgressText.text = "${(taskWeight * 100).toInt()}%"
             prosConsBinding.decProgressCircular.progress = (taskWeight * 100).toInt()
             decision.currentProgress = (taskWeight * 100).toInt()
-            mainViewModel.updateDecision(decision)
+            decisionsViewModel.updateDecision(decision)
         })
 
         prosConsBinding.fabAddTask.setOnClickListener {
-            prosConsBottomSheet.show(supportFragmentManager, TAGMODALBOTTOMSHEET)
+            prosConsBottomSheet.show(supportFragmentManager, TAG_MODAL_BOTTOM_SHEET)
         }
 
         prosConsBinding.fabEditTask.setOnClickListener {
             editBottomSheet.setDecision(decision)
-            editBottomSheet.show(supportFragmentManager, TAGMODALBOTTOMSHEET)
+            editBottomSheet.show(supportFragmentManager, TAG_MODAL_BOTTOM_SHEET)
         }
-
-        prosConsFragment.setModalBottomSheet(prosConsBottomSheet)
-        val bundle = Bundle()
-        bundle.putSerializable("decision", decision)
-        prosConsFragment.arguments = bundle
-        supportFragmentManager.beginTransaction()
-            .add(R.id.pros_cons_container, prosConsFragment)
-            .commit()
     }
 
     override fun dismiss() {
@@ -104,6 +91,6 @@ UpdateListener {
     }
 
     override fun onUpdate(decision: Decision) {
-        mainViewModel.updateDecision(decision)
+        decisionsViewModel.updateDecision(decision)
     }
 }
