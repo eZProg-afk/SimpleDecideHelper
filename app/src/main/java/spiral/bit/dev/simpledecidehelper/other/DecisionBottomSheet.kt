@@ -9,11 +9,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.fragment.app.viewModels
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.admanager.AdManagerAdRequest
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import spiral.bit.dev.simpledecidehelper.R
+import spiral.bit.dev.simpledecidehelper.databinding.DecisionBottomSheetBinding
 import spiral.bit.dev.simpledecidehelper.listeners.DismissListener
 import spiral.bit.dev.simpledecidehelper.listeners.InsertDecisionListener
 import spiral.bit.dev.simpledecidehelper.models.Decision
@@ -23,9 +25,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DecisionBottomSheet : BottomSheetDialogFragment() {
 
+    private val decisionBottomBinding: DecisionBottomSheetBinding by viewBinding()
+    private lateinit var insertDecisionListener: InsertDecisionListener
     private lateinit var dismissListener: DismissListener
     @Inject lateinit var defSharedPrefs: SharedPreferences
-    private lateinit var insertDecisionListener: InsertDecisionListener
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,34 +39,31 @@ class DecisionBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val etTaskTitle: EditText = view.findViewById(R.id.et_task_title)
-        val addTaskBtn: Button = view.findViewById(R.id.btn_add_task)
-        val closeBottomSheet: ImageView = view.findViewById(R.id.close_bottom_sheet)
-        val adBanner = view.findViewById<AdView>(R.id.adView)
-
         if (defSharedPrefs.getSubscribeValueFromPref()) {
-            adBanner.visibility = View.GONE
+            decisionBottomBinding.adView.visibility = View.GONE
         } else {
-            adBanner.visibility = View.VISIBLE
-            adBanner.loadAd(AdManagerAdRequest.Builder().build())
+            decisionBottomBinding.adView.visibility = View.VISIBLE
+            decisionBottomBinding.adView.loadAd(AdManagerAdRequest.Builder().build())
         }
 
-        addTaskBtn.setOnClickListener {
-            if (etTaskTitle.text.isNotEmpty()) {
+        decisionBottomBinding.btnAddTask.setOnClickListener {
+            if (decisionBottomBinding.etTaskTitle.text.isNotEmpty()) {
                 insertDecisionListener.onInsert(
                     Decision(
                         0,
-                        etTaskTitle.text.toString(),
+                        decisionBottomBinding.etTaskTitle.text.toString(),
                         0,
                         "#91E3A4"
                     ), 0
                 )
                 dismissListener.dismiss()
-                etTaskTitle.setText("")
+                decisionBottomBinding.etTaskTitle.setText("")
             } else requireContext() showToast getString(R.string.enter_title_of_task)
         }
 
-        closeBottomSheet.setOnClickListener { dismissListener.dismiss() }
+        decisionBottomBinding.closeBottomSheet.setOnClickListener {
+            dismissListener.dismiss()
+        }
     }
 
     fun setMyDismissListener(dismissListener: DismissListener) {

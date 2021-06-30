@@ -13,4 +13,11 @@ data class Decision(
     var title: String,
     var currentProgress: Int,
     var color: String?
-) : Serializable
+) : Serializable {
+    constructor(): this(
+        0,
+        "",
+        0,
+        ""
+    )
+}

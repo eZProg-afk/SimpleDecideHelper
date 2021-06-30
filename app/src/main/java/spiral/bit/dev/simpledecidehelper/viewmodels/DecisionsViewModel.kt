@@ -1,9 +1,7 @@
 package spiral.bit.dev.simpledecidehelper.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,7 +11,8 @@ import spiral.bit.dev.simpledecidehelper.repo.DecisionRepository
 import javax.inject.Inject
 
 @HiltViewModel
-class DecisionsViewModel @Inject constructor(
+class DecisionsViewModel @AssistedInject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val decisionRepo: DecisionRepository
 ) : ViewModel() {
 

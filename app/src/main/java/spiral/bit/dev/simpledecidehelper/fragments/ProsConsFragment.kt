@@ -1,6 +1,7 @@
 package spiral.bit.dev.simpledecidehelper.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,8 +17,10 @@ import spiral.bit.dev.simpledecidehelper.listeners.DeleteProsConsListener
 import spiral.bit.dev.simpledecidehelper.listeners.InsertProsConsListener
 import spiral.bit.dev.simpledecidehelper.models.Decision
 import spiral.bit.dev.simpledecidehelper.models.ProsConsItem
+import spiral.bit.dev.simpledecidehelper.other.LOG_TAG
 import spiral.bit.dev.simpledecidehelper.other.ProsConsBottomSheet
 import spiral.bit.dev.simpledecidehelper.other.checkRecyclerProsCons
+import spiral.bit.dev.simpledecidehelper.viewmodels.DecisionsViewModel
 import spiral.bit.dev.simpledecidehelper.viewmodels.ProsConsViewModel
 import java.util.*
 
@@ -34,7 +37,7 @@ class ProsConsFragment : Fragment(R.layout.fragment_pros_cons), DeleteProsConsLi
     private val prosConsAdapter by lazy { ProsConsAdapter() }
 
     private var listOfProsCons = arrayListOf<ProsConsItem>()
-    private var decision: Decision? = null
+    private var decision: Decision = Decision()
     private val helper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN
                 or ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT, 0
@@ -58,11 +61,11 @@ class ProsConsFragment : Fragment(R.layout.fragment_pros_cons), DeleteProsConsLi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        activity?.actionBar?.setDisplayHomeAsUpEnabled(true)
+        requireActivity().actionBar?.setDisplayHomeAsUpEnabled(true)
         arguments?.let {
-            decision = it.getSerializable("decision") as Decision?
-            decision?.id?.let { it1 -> prosConsViewModel.setParentId(it1) }
-        }
+            decision = it.getSerializable("decision") as Decision
+            prosConsViewModel.setParentId(decision.id)
+        } ?: Log.d(LOG_TAG, "Decision in prosConsFrag is null")
 
         myProsConsBottomSheet.setMyInsertListener(this)
         prosConsAdapter.setMyDeleteProsConsListener(this)
@@ -75,7 +78,9 @@ class ProsConsFragment : Fragment(R.layout.fragment_pros_cons), DeleteProsConsLi
 
         prosConsBinding.prosConsRv.apply {
             adapter = prosConsAdapter
-            layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            layoutManager =
+                StaggeredGridLayoutManager(2,
+                    StaggeredGridLayoutManager.VERTICAL)
             setHasFixedSize(true)
             helper.attachToRecyclerView(this)
         }
@@ -84,25 +89,22 @@ class ProsConsFragment : Fragment(R.layout.fragment_pros_cons), DeleteProsConsLi
     override fun onDelete(prosConsItem: ProsConsItem, position: Int) {
         prosConsViewModel.deleteProsConsItem(prosConsItem)
         prosConsAdapter.notifyItemRemoved(position)
-        prosConsViewModel.allProsCons.observe(viewLifecycleOwner) {
-            it checkRecyclerProsCons (prosConsBinding)
-        }
     }
 
     override fun onInsert(prosConsItem: ProsConsItem, position: Int) {
-        decision?.id?.let {
-            ProsConsItem(
-                prosConsItem.id,
-                it,
-                prosConsItem.title,
-                prosConsItem.isProf,
-                prosConsItem.weight
-            )
-        }?.let {
+        ProsConsItem(
+            prosConsItem.id,
+            decision.id,
+            prosConsItem.title,
+            prosConsItem.isProf,
+            prosConsItem.weight
+        ).let {
             prosConsViewModel.insertProsConsItem(
                 it
             )
+        }.also {
+            prosConsAdapter.notifyItemInserted(position)
+            prosConsBinding.prosConsRv.smoothScrollToPosition(position)
         }
-        prosConsBinding.prosConsRv.smoothScrollToPosition(position)
     }
 }

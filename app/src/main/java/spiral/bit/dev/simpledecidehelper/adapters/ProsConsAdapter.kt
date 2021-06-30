@@ -57,7 +57,10 @@ class ProsConsAdapter : RecyclerView.Adapter<ProsConsAdapter.ProsConsViewHolder>
 
     override fun getItemCount(): Int = differ.currentList.size
 
-    fun submitList(list: List<ProsConsItem>) = differ.submitList(list)
+    fun submitList(list: List<ProsConsItem>) {
+        differ.submitList(list)
+        notifyDataSetChanged()
+    }
 
     fun setMyDeleteProsConsListener(deleteProsConsListener: DeleteProsConsListener) {
         this.deleteProsConsListener = deleteProsConsListener

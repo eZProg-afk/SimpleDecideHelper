@@ -73,25 +73,23 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), DismissListener,
         lifecycleScope.launchWhenCreated {
             defSharedPrefs startWorkManager this@MainActivity
             billingClient.startConnection(billingListener)
-            setUpViews()
+            setUpPayState()
+            setUpListeners()
+            setUpDrawer()
         }
     }
 
-    private fun setUpViews() {
+    private fun setUpPayState() {
         if (defSharedPrefs.getSubscribeValueFromPref()) {
             decisionsBinding.adView.isVisible = false
         } else {
             decisionsBinding.adView.isVisible = true
             decisionsBinding.adView.loadAd(AdManagerAdRequest.Builder().build())
         }
-
-        myTasksFragment.setModalBottomSheet(decisionBottomSheet)
-
-        setUpListeners()
-        setUpDrawer()
     }
 
     private fun setUpListeners() {
+        myTasksFragment.setModalBottomSheet(decisionBottomSheet)
         decisionBottomSheet.setMyDismissListener(this)
         completeBottomSheet.setMyDismissListener(this)
 
@@ -139,7 +137,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), DismissListener,
                     R.id.completed_decisions -> {
                         decisionsBinding.drawerLayout.closeDrawer(Gravity.LEFT)
                         decisionsBinding.tabBar.itemActiveIndex = 1
-                        changeFragments(complTasksFragment, true, R.id.main_fragment_container)
+                        changeFragments(complTasksFragment, true,
+                            R.id.main_fragment_container)
                         return@setNavigationItemSelectedListener true
                     }
                     R.id.rate_app -> {
@@ -192,9 +191,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), DismissListener,
                 BillingResponseCode.ITEM_ALREADY_OWNED ->
                     billingClient.queryPurchases(SUBS).also {
                         it.purchasesList
-                            ?.let { purchases ->
+                            ?.let { subs ->
                                 this.handlePurchases(
-                                    purchases,
+                                    subs,
                                     billingClient,
                                     defSharedPrefs,
                                     ackPurchaseListener

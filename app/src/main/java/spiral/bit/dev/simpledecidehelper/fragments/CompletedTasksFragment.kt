@@ -38,7 +38,7 @@ ComplDismissListener {
 
         complTasksBinding.decisionsRv.apply {
             adapter = decisionAdapter
-            hasFixedSize()
+            setHasFixedSize(true)
         }
     }
 
@@ -46,9 +46,6 @@ ComplDismissListener {
         prosConsViewModel.deleteAllComplProsConsByID(completedDecision.id)
         decisionsViewModel.deleteCompletedDecision(completedDecision)
         decisionAdapter.notifyItemRemoved(position)
-        decisionsViewModel.allCompletedDecisions.observe(viewLifecycleOwner) {
-            it checkRecyclerCompl complTasksBinding
-        }
     }
 
     override fun editDismiss() {

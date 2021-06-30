@@ -20,13 +20,13 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class EditBottomSheet : BottomSheetDialogFragment() {
 
-    private val editBinding: EditBottomSheetBinding by viewBinding()
     @Inject
     lateinit var defSharedPrefs: SharedPreferences
+    private val editBinding: EditBottomSheetBinding by viewBinding()
     private lateinit var complDismissListener: ComplDismissListener
     private lateinit var updateListener: UpdateListener
-    private var selectedNoteColor: String? = "#333333"
     private lateinit var decision: Decision
+    private var selectedNoteColor = "#333333"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,18 +45,27 @@ class EditBottomSheet : BottomSheetDialogFragment() {
         }
 
         editBinding.etTaskTitle.setText(decision.title)
+        setUpBottomSheetColors()
+        setUpListeners()
+    }
 
+    private fun setUpListeners() {
         editBinding.btnEditTask.setOnClickListener {
             if (editBinding.etTaskTitle.text.isNotEmpty()) {
                 decision.title = editBinding.etTaskTitle.text.toString()
                 decision.color = selectedNoteColor
-
                 updateListener.onUpdate(decision)
                 complDismissListener.editDismiss()
                 editBinding.etTaskTitle.setText("")
             } else requireContext() showToast getString(R.string.enter_title_of_task)
         }
 
+        editBinding.closeBottomSheet.setOnClickListener {
+            complDismissListener.editDismiss()
+        }
+    }
+
+    private fun setUpBottomSheetColors() {
         editBinding.viewColor1.setOnClickListener {
             selectedNoteColor = "#91E3A4"
             editBinding.imageColor1.setImageResource(R.drawable.ic_done)
@@ -95,10 +104,6 @@ class EditBottomSheet : BottomSheetDialogFragment() {
                 "#FF4842" -> editBinding.viewColor3.performClick()
                 "#3A52FC" -> editBinding.viewColor4.performClick()
             }
-        }
-
-        editBinding.closeBottomSheet.setOnClickListener {
-            complDismissListener.editDismiss()
         }
     }
 

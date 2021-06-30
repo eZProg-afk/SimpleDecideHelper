@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import spiral.bit.dev.simpledecidehelper.R
@@ -20,7 +21,6 @@ import spiral.bit.dev.simpledecidehelper.other.DecisionBottomSheet
 import spiral.bit.dev.simpledecidehelper.other.checkRecyclerDecisions
 import spiral.bit.dev.simpledecidehelper.viewmodels.DecisionsViewModel
 import spiral.bit.dev.simpledecidehelper.viewmodels.ProsConsViewModel
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyTasksFragment : Fragment(R.layout.fragment_my_tasks), DeleteListener,
@@ -32,23 +32,28 @@ class MyTasksFragment : Fragment(R.layout.fragment_my_tasks), DeleteListener,
     private val myTasksBinding: FragmentMyTasksBinding by viewBinding(
         FragmentMyTasksBinding::bind
     )
-    lateinit var myDecisionBottomSheet: DecisionBottomSheet
+    private lateinit var myDecisionBottomSheet: DecisionBottomSheet
     private val decisionAdapter by lazy { DecisionAdapter() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        decisionAdapter.setMyDeleteListener(this)
-        decisionAdapter.setMyOpenListener(this)
-
+        setUpViews()
         decisionsViewModel.allDecisions.observe(viewLifecycleOwner) {
             decisionAdapter.submitList(it)
             it checkRecyclerDecisions myTasksBinding
         }
+    }
+
+    private fun setUpViews() = lifecycleScope.launchWhenCreated {
+        decisionAdapter.apply {
+            setMyDeleteListener(this@MyTasksFragment)
+            setMyOpenListener(this@MyTasksFragment)
+        }
 
         myTasksBinding.decisionsRv.apply {
             adapter = decisionAdapter
-            hasFixedSize()
+            setHasFixedSize(true)
         }
     }
 
@@ -63,31 +68,30 @@ class MyTasksFragment : Fragment(R.layout.fragment_my_tasks), DeleteListener,
                     decision.color
                 )
             )
-            allComplProsCons.observe(viewLifecycleOwner) {
-                it.forEach { prosConsItem ->
+            allComplProsCons.observe(viewLifecycleOwner) { resultList ->
+                resultList.forEach { prosConsItem ->
                     prosConsViewModel.insertComplProsConsItem(prosConsItem)
                 }
             }
             deleteAllProsConsByID(decision.id)
             decisionsViewModel.deleteDecision(decision)
             decisionAdapter.notifyItemRemoved(position)
-            decisionsViewModel.allDecisions.observe(viewLifecycleOwner, {
-                it checkRecyclerDecisions myTasksBinding
-            })
         }
     }
 
     override fun onInsert(decision: Decision, position: Int) {
         decisionsViewModel.insertDecision(decision)
+        myTasksBinding.decisionsRv.smoothScrollToPosition(position)
     }
 
     fun setModalBottomSheet(decisionBottomSheet: DecisionBottomSheet) {
         this.myDecisionBottomSheet = decisionBottomSheet
-        //myDecisionBottomSheet.setMyInsertListener(this)
+        myDecisionBottomSheet.setMyInsertListener(this)
     }
 
     override fun open(decision: Decision) {
         Intent(activity, ProsConsActivity::class.java)
-            .apply { putExtra("decision", decision) }.also { startActivity(it) }
+            .apply { putExtra("decision", decision) }
+            .also { startActivity(it) }
     }
 }
